@@ -4,44 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Service\CapiService;
 use Illuminate\Http\Request;
-use App\Service\Reply;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 
 class ReplyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Service\CapiService $capi
-     * @return void
-     * @throws \ReflectionException
-     */
-    public function store(Request $request, CapiService $capi)
-    {
+    public function reply(Request $request, CapiService $capi) {
         Log::channel('getLineMessage')->info($request);
 
         foreach ($request['events'] as $item) {
@@ -49,7 +18,7 @@ class ReplyController extends Controller
             $code = strtoupper($item['message']['text']);
         }
 
-        $result = $capi->get($code);
+        $result = $capi->getCurrency($code);
 
         if (isset($result['error'])) {
             $replyText = $result['error'];
@@ -67,50 +36,5 @@ class ReplyController extends Controller
         } else {
             Log::channel('getLineMessage')->error('result:'.$response->getHTTPStatus().' '.$response->getRawBody());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

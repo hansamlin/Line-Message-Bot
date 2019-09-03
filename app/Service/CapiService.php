@@ -15,7 +15,7 @@ class CapiService
         $this->content = json_decode($body->getContents(), true);
     }
 
-    public function get($code)
+    public function getCurrency($code)
     {
         if (isset($this->content['USD'.$code])) {
             return ['currency' => $this->content['USD'.$code]['Exrate']];

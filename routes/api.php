@@ -15,22 +15,18 @@ use GuzzleHttp\Client;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
 /*
  * test code
  */
 Route::get('test', function (Request $request) {
-    $client = new Client();
-    $response = $client->get('https://tw.rter.info/capi.php');
-
-    $body = $response->getBody();
-    $content = $body->getContents();
-    dump(json_decode($content, true));
+    //echo phpinfo();
+    //$client = new Client();
+    //$response = $client->get('https://tw.rter.info/capi.php');
+    //    //
+    //    //$body = $response->getBody();
+    //    //$content = $body->getContents();
+    //    //dump(json_decode($content, true));
 
 });
 
-Route::resource('reply', 'ReplyController');
+Route::post('reply', 'ReplyController@reply');

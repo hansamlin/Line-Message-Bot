@@ -16,13 +16,13 @@
     cp .env.example .env
     ```
 
-4. 從line developers取得channel access token跟channel serect
+4. 取得Channel access token跟Channel serect並新增到.env
     ```
     LINE_CHANNEL_ACCESS_TOKEN={Channel access token}
     LINE_CHANNEL_SECRET={Channel serect}
     ```
 
-5. 在line developers的channel setting設定Webhook URL(replyMessage使用)
+5. Channel setting設定Webhook URL(replyMessage使用)
 
 ## 資料來源
 * 黃金匯率：https://goldprice.org/zh-hant

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Service\CapiService;
+use App\Service\CodeService;
 use App\Service\GoldService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +12,7 @@ use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 
 class ReplyController extends Controller
 {
-    public function reply(Request $request, GoldService $gold, CapiService $capi)
+    public function reply(Request $request, GoldService $gold, CapiService $capi, CodeService $code)
     {
         Log::channel('getLineMessage')->info($request);
 
@@ -24,10 +25,14 @@ class ReplyController extends Controller
         $httpClient = new CurlHTTPClient(env('LINE_CHANNEL_ACCESS_TOKEN'));
         $bot = new LINEBot($httpClient, ['channelSecret' => env('LINE_CHANNEL_SECRET')]);
 
-        if ($text == '黃金' or strtolower($text) == 'gold') {
-            $replyMessage = $gold->getImage();
+        if (in_array($text, $code->isCode()) || in_array(strtolower($text), $code->isCode())) {
+            $replyMessage = $code->getCode();
         } else {
-            $replyMessage = $capi->getCurrency(strtoupper($text));
+            if (in_array($text, $code->isGold())) {
+                $replyMessage = $gold->getImage();
+            } else {
+                $replyMessage = $capi->getCurrency(strtoupper($text));
+            }
         }
         $response = $bot->replyMessage($replyToken, $replyMessage);
 

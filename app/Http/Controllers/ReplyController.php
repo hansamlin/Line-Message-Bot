@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Service\CapiService;
+use App\Service\GoldService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot;
@@ -10,26 +11,25 @@ use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 
 class ReplyController extends Controller
 {
-    public function reply(Request $request, CapiService $capi) {
+    public function reply(Request $request, GoldService $gold, CapiService $capi)
+    {
         Log::channel('getLineMessage')->info($request);
 
+        $text = 'twd';
         foreach ($request['events'] as $item) {
             $replyToken = $item['replyToken'];
-            $code = strtoupper($item['message']['text']);
-        }
-
-        $result = $capi->getCurrency($code);
-
-        if (isset($result['error'])) {
-            $replyText = $result['error'];
-        } else {
-            $replyText = $result['currency'].' '.$code;
+            $text = $item['message']['text'];
         }
 
         $httpClient = new CurlHTTPClient(env('LINE_CHANNEL_ACCESS_TOKEN'));
         $bot = new LINEBot($httpClient, ['channelSecret' => env('LINE_CHANNEL_SECRET')]);
 
-        $response = $bot->replyText($replyToken, $replyText);
+        if ($text == '黃金' or strtolower($text) == 'gold') {
+            $replyMessage = $gold->getImage();
+        } else {
+            $replyMessage = $capi->getCurrency(strtoupper($text));
+        }
+        $response = $bot->replyMessage($replyToken, $replyMessage);
 
         if ($response->isSucceeded()) {
             Log::channel('getLineMessage')->info('result:Succeeded');
